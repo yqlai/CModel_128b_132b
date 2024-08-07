@@ -1,4 +1,4 @@
-# 8b/10b CModel
+# 128b/132b CModel
 A CModel which simulates the behavior of DPIA.
 ## Usage
 1. Put the input file which corresponds to the format specified in format.txt into data/input/.

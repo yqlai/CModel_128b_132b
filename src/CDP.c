@@ -1,32 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+# include "headers/CDP.h"
 
 #define HEADER_SIZE 4
 #define NUM_TU_FIELDS 8 // 2 hexadecimal digits per byte
 
-#define HEC_POLY 0x07
-#define HEC_INIT 0x00
-#define HEC_XOROUT 0x55
+uint32_t generate_CDP_USB4_Header(uint8_t Length)
+{
+    uint8_t PDF = PDF_CONTROL_AND_DATA_PACKET;
+    uint8_t SuppID = SUPP_ID_DEFAULT;
+    uint8_t Rsvd1 = RESERVED_DEFAULT;
+    uint8_t HopID = HOPID_DEFAULT; 
 
-uint8_t calculateHEC(uint32_t header){
-    uint8_t data[4];
-    for (int i = 0; i < 4; i++) {
-        data[i] = (header >> (24 - i * 8)) & 0xFF;
-    }
+    uint32_t header = (PDF << 28) | (SuppID << 27) | (Rsvd1 << 23) | (HopID << 16) | (Length << 8);
+    header = header | calculateHEC(header);
 
-    uint8_t crc = (uint8_t)HEC_INIT;
-    for (int i = 0; i < 3; i++) {
-        crc ^= data[i];
-        for (int j = 0; j < 8; j++) {
-            if (crc & 0x80)
-                crc = (crc << 1) ^ HEC_POLY;
-            else
-                crc <<= 1;
-        }
-    }
-    crc ^= HEC_XOROUT;
-    return crc;
+    return header;
 }
 
 /**
@@ -70,25 +57,10 @@ void add_tu_payload(uint8_t *buffer, int *index, uint8_t length)
         buffer[(*index)++] = (i & 0xFF);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s <Params of TU 1> <Params of TU 2> ... <Params of TU n>\n", argv[0]);
-        printf("If it is a Control TU,  Params should be 0 <Count> <Control Type>.\n");
-        printf("If it is a Data TU,     Params should be 1 <Count>.\n");
-        return 1;
-    }
-
-    // USB4 Tunneled Packet Header Fields
-    uint8_t PDF = 0x9;
-    uint8_t SuppID = 0x0;
-    uint8_t Rsvd1 = 0x0;
-    uint8_t HopID = 0x9; // This can be user-defined
-    uint8_t Length = 4;
-
-
+void generate_TU(uint8_t *packet, uint8_t *Length, int argc, char **argv)
+{
     // Construct the TUs
     int index = HEADER_SIZE; // Start index after the header
-    uint8_t packet[248]; // Adjust size if necessary
 
     for (int i = 1; i < argc;)
     {
@@ -103,7 +75,7 @@ int main(int argc, char *argv[]) {
             {
                 uint8_t control_type = strtol(argv[i+2], NULL, 10);
                 add_tu_header(packet, &index, count, 0, control_type);
-                Length += 4;
+                *Length += 4;
                 
                 i += 3;
             }
@@ -114,37 +86,45 @@ int main(int argc, char *argv[]) {
                 add_tu_header(packet, &index, count, 1, 0);
                 add_tu_payload(packet, &index, count*4);
                 
-                Length += (4 + count * 4); // Each count is a Double Words (4 bytes)
+                *Length += (4 + count * 4); // Each count is a Double Words (4 bytes)
                  
                 i += 2;
             }
 
             else {
                 printf("Invalid input format.\n");
-                return 1;
+                return;
             }
         } 
         else {
             printf("Invalid input format.\n");
-            return 1;
+            return;
         }
     }
+}
 
-    uint32_t header = (PDF << 28) | (SuppID << 27) | (Rsvd1 << 23) | (HopID << 16) | (Length << 8);
-    header = header | calculateHEC(header);
+void CDP_GEN(int argc, char *argv[], FILE* file) {
+    if (argc < 2) {
+        printf("Usage: %s <Params of TU 1> <Params of TU 2> ... <Params of TU n>\n", argv[0]);
+        printf("If it is a Control TU,  Params should be 0 <Count> <Control Type>.\n");
+        printf("If it is a Data TU,     Params should be 1 <Count>.\n");
+        return;
+    }
+
+    uint8_t Length = 0;
+
+    // Construct the TUs
+    int index = HEADER_SIZE; // Start index after the header
+    uint8_t packet[248]; // Adjust size if necessary
+
+    generate_TU(packet, &Length, argc, argv);
+
+    uint32_t header = generate_CDP_USB4_Header(Length);
     packet[0] = (header >> 24) & 0xFF;
     packet[1] = (header >> 16) & 0xFF;
     packet[2] = (header >> 8) & 0xFF;
     packet[3] = header & 0xFF;
 
-    // Print the packet in hexadecimal
-    printf("Generated USB4 Control and Data Packet:\n");
-    for (int j = 0; j < index; ) {
-        for(int k = 0; k < 4 && j < index; k++, j++) {
-            printf("%02X ", packet[j]);
-        }
-        printf("\n");
-    }
-
-    return 0;
+    bytesToHexString(packet, HEADER_SIZE, file, 1);
+    bytesToHexString(packet + HEADER_SIZE, Length, file, 0);
 }
