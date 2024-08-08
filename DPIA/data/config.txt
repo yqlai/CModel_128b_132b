@@ -1,0 +1,26 @@
+4
+
+[MSA]
+Fill_Count {50,100}
+
+[BS]
+SR {0,1}
+CP {0,1}
+Fill_Count {50,100}
+
+[VD]
+TU_Sets {1:4}
+EOC {0}
+TU_Type {0}
+L {0}
+Fill_Count {128}
+Video_Count {0:63}
+
+[SD]
+TU_Sets {1:2}
+EFC_ND {0,1}
+NSS {0,1}
+NSE {0,1}
+L {0,1}
+Fill_Count {128}
+Secondary_Count {0:63}
