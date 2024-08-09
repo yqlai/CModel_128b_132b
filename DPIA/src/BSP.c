@@ -7,9 +7,9 @@ void get_BSP_payload_format(enum PAYLOAD_TYPE payloadFormat[], int lane)
     {
         case 1:
         {
-            enum PAYLOAD_TYPE BSP_PAYLOAD_FORMAT_LANE_1[12] = { VBID,       VBID,       VBID,       VBID,
-                                                                MVID_7_0,   MVID_7_0,   MVID_7_0,   MVID_7_0, 
-                                                                MAUD_7_0,   MAUD_7_0,   MAUD_7_0,   MAUD_7_0};
+            enum PAYLOAD_TYPE BSP_PAYLOAD_FORMAT_LANE_1[12] = { VBID,       MVID_7_0,   MAUD_7_0,   VBID,
+                                                                MVID_7_0,   MAUD_7_0,   VBID,       MVID_7_0, 
+                                                                MAUD_7_0,    VBID,      MVID_7_0,   MAUD_7_0};
             for(int i=0 ; i<12 ; i++)
                 payloadFormat[i] = BSP_PAYLOAD_FORMAT_LANE_1[i];
             return;
@@ -25,9 +25,9 @@ void get_BSP_payload_format(enum PAYLOAD_TYPE payloadFormat[], int lane)
         }
         case 4:
         {
-            enum PAYLOAD_TYPE BSP_PAYLOAD_FORMAT_LANE_4[12] = { VBID,       MVID_7_0,   MAUD_7_0,   VBID,
-                                                                MVID_7_0,   MAUD_7_0,   VBID,       MVID_7_0, 
-                                                                MAUD_7_0,    VBID,      MVID_7_0,   MAUD_7_0};
+            enum PAYLOAD_TYPE BSP_PAYLOAD_FORMAT_LANE_4[12] = { VBID,       VBID,       VBID,       VBID,
+                                                                MVID_7_0,   MVID_7_0,   MVID_7_0,   MVID_7_0, 
+                                                                MAUD_7_0,   MAUD_7_0,   MAUD_7_0,   MAUD_7_0};
             for(int i=0 ; i<12 ; i++)
                 payloadFormat[i] = BSP_PAYLOAD_FORMAT_LANE_4[i];
             return;

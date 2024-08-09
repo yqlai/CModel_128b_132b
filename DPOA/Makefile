@@ -22,9 +22,6 @@ run:
 input:
 	./input/src/main
 
-copy:
-	copy data\output\*.txt ..\DPOA\data\input\
-
 clean:
 	$(RM) $(patsubst obj/%.o, obj\\%.o, $(OBJS))
 	$(RM) main.exe

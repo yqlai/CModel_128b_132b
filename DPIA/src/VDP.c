@@ -138,7 +138,7 @@ void generate_Tunneled_VD_Packet(uint32_t USB4_header, uint32_t *TU_set_headers,
     int totalPacketLength = 4 + (num_TU_sets * 4) + totalVideoDataLength;  // 4 bytes for Tunneled Packet Header + TU headers + Video data
     
     // Update the total packet length in the Tunneled Packet Header
-    tunHeader[2] = (totalPacketLength - 4) == 256 ? (totalPacketLength - 4) : 0;  // Exclude the Tunneled Packet Header length
+    tunHeader[2] = (totalPacketLength - 4) == 256 ? 0 : (totalPacketLength - 4);  // Exclude the Tunneled Packet Header length
     tunHeader[3] = calculateHEC((uint32_t)((uint32_t)(tunHeader[0] << 24) | (uint32_t)(tunHeader[1] << 16) | (uint32_t)(tunHeader[2] << 8) | (uint32_t)(0)));
 
     // Write the tunneled packet header to the file

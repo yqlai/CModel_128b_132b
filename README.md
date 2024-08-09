@@ -3,7 +3,7 @@ DP Tunneling C Model.
 
 ## DPIA
 The script turns the packets specified in input file into the hexadecimal form(data/outout/sample.txt).  
-Sample input and output are here: [Input](DPIA/data/input/sample.txt) [Output](DPIA/data/output/sample.txt).  
+Sample input and output are here: [Input](DPIA/data/input/sample.txt) / [Output](DPIA/data/output/sample.txt).  
 Details are written in the [format.txt](DPIA/format.txt).  
 
 ### Usage

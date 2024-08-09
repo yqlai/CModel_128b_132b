@@ -124,6 +124,7 @@ int main(int argc, char *argv[])
     else lane[1] = '\0';
 
     LANE_NUMBER = strtol(lane, NULL, 10);
+    fprintf(outputfile, "%d\n", LANE_NUMBER);
 
     char line[500];
     while(fgets(line, 500, inputfile))
