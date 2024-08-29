@@ -27,7 +27,7 @@ void DP_GEN(int argc, char *argv[], FILE *file) {
     // Data Packet Payload
     for(int i=0 ; i < Length ; i++)
     {
-        uint8_t dummy[1] = {i*0xFF};
+        uint8_t dummy[1] = {i & 0xFF};
         bytesToHexString(dummy, 1, file, 0);
     }
 }
